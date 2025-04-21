@@ -71,3 +71,8 @@ if (!currentUser) {
     });
     quizListContainer.appendChild(quizButton);
   });
+
+  logoutButton.addEventListener("click", function () {
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+  });
