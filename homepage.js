@@ -59,20 +59,22 @@ if (!currentUser) {
   }
   
   const quizzes = JSON.parse(localStorage.getItem("quizzes"));
-
+  
   quizzes.forEach(function (quiz, index) {
     const quizButton = document.createElement("button");
     quizButton.innerText = quiz.title;
     quizButton.classList.add("quiz-btn");
     quizButton.addEventListener("click", function () {
-      // Save the selected quiz index so we know which one to load later
-      localStorage.setItem("currentQuizIndex", index);
-      window.location.href = "quiz.html";
+        
+        localStorage.setItem("currentQuizIndex", index);
+        window.location.href = "quiz.html";
     });
+    
     quizListContainer.appendChild(quizButton);
-  });
+});
 
-  logoutButton.addEventListener("click", function () {
+
+logoutButton.addEventListener("click", function () {
     localStorage.removeItem("currentUser");
     window.location.href = "index.html";
-  });
+});
