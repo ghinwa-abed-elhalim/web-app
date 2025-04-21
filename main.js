@@ -19,4 +19,10 @@ registerTabButton.addEventListener("click", function() {
 
 loginFormElement.addEventListener("submit", function (event) {
     event.preventDefault();
+
+    const loginEmail = document.querySelector(".login-email").value;
+    const loginPassword = document.querySelector(".login-password").value;
+    const storedUsers = localStorage.getItem("users");
+    const userArray = storedUsers ? JSON.parse(storedUsers) : [];
+    
 })
