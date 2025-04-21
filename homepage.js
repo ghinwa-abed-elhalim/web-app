@@ -5,62 +5,64 @@ const logoutButton = document.querySelector(".logout-btn");
 
 if (!currentUser) {
     window.location.href = "index.html";
-  }
-  
-  welcomeMessage.innerText = `Welcome, ${currentUser.name}! 🌸`;
+}
 
+welcomeMessage.innerText = `Welcome, ${currentUser.name}! 🌸`;
 
-  const initialQuizzes = [
+const initialQuizzes = [
+    
     {
-      title: "General Knowledge",
-      questions: [
-        {
-          question: "What is the capital of France?",
-          options: ["Berlin", "Paris", "Rome"],
-          answer: "Paris"
-        },
-        {
-          question: "How many continents are there?",
-          options: ["5", "6", "7"],
-          answer: "7"
-        },
-        {
-          question: "Which planet is known as the Red Planet?",
-          options: ["Mars", "Jupiter", "Saturn"],
-          answer: "Mars"
-        }
-      ]
+        title: "General Knowledge",
+        questions: [
+            {
+                question: "What is the capital of Germany?",
+                options: ["Berlin", "Paris", "Rome"],
+                answer: "Berlin"
+            },
+            
+            {
+                question: "How many continents are there?",
+                options: ["5", "6", "7"],
+                answer: "7"
+            
+            },
+            
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Mars", "Jupiter", "Saturn"],
+                answer: "Mars"
+            }
+        ]
     },
+    
     {
-      title: "Math Quiz",
-      questions: [
-        {
-          question: "What is 10 + 5?",
-          options: ["10", "15", "20"],
-          answer: "15"
-        },
-        {
-          question: "What is 7 x 3?",
-          options: ["21", "14", "24"],
-          answer: "21"
-        },
-        {
-          question: "What is the square root of 64?",
-          options: ["6", "8", "10"],
-          answer: "8"
-        }
-      ]
+        title: "Math Quiz",
+        questions: [
+            {
+                question: "What is 20 + 4?",
+                options: ["20", "24", "23"],
+                answer: "24"
+            },
+            {
+                question: "What is 3 x 3?",
+                options: ["9", "12", "24"],
+                answer: "9"
+            },
+            {
+                question: "What is the square root of 64?",
+                options: ["6", "8", "10"],
+                answer: "8"
+            }
+        ]
     }
-  ];
+];
 
-
-  if (!localStorage.getItem("quizzes")) {
+if (!localStorage.getItem("quizzes")) {
     localStorage.setItem("quizzes", JSON.stringify(initialQuizzes));
-  }
-  
-  const quizzes = JSON.parse(localStorage.getItem("quizzes"));
-  
-  quizzes.forEach(function (quiz, index) {
+}
+
+const quizzes = JSON.parse(localStorage.getItem("quizzes"));
+quizzes.forEach(function (quiz, index) {
     const quizButton = document.createElement("button");
     quizButton.innerText = quiz.title;
     quizButton.classList.add("quiz-btn");
@@ -69,10 +71,8 @@ if (!currentUser) {
         localStorage.setItem("currentQuizIndex", index);
         window.location.href = "quiz.html";
     });
-    
     quizListContainer.appendChild(quizButton);
 });
-
 
 logoutButton.addEventListener("click", function () {
     localStorage.removeItem("currentUser");
