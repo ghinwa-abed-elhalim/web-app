@@ -51,8 +51,8 @@ h1, h2, h3 {
 input[type="text"], input[type="email"], input[type="password"] {
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid #ddd;
-    width: 100%;
+    border: 10px solid #ddd;
+    width: 93%;
 }
 
 button[type="submit"], .submit-btn, .logout-btn {
