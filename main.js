@@ -1,7 +1,13 @@
-const loginTabBtn = document.querySelector(".login-tab");
-const registerTabBtn = document.querySelector(".register-tab");
-const loginForm = document.querySelector(".login-form");
-const registerForm =  document.querySelector("register-form");
-const messageEl = document.querySelector(".message");
+const loginTabButton = document.querySelector(".login-tab");
+const registerTabButton = document.querySelector(".register-tab");
+const loginFormElement = document.querySelector(".login-form");
+const registerFormElement =  document.querySelector("register-form");
+const messageParagraph = document.querySelector(".message");
 
+
+loginTabButton.addEventListener("click", function(){
+    loginFormElement.classList.remove("hidden");
+    registerFormElement.classList.add("hidden");
+    messageParagraph.innerText = "";
+});
 
