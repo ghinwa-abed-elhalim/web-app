@@ -11,3 +11,12 @@ loginTabButton.addEventListener("click", function(){
     messageParagraph.innerText = "";
 });
 
+registerTabButton.addEventListener("click", function() {
+    registerFormElement.classList.remove("hidden");
+    loginFormElement.classList.add("hidden");
+    messageParagraph.innerText = "";
+});
+
+loginFormElement.addEventListener("submit", function (event) {
+    event.preventDefault();
+})
