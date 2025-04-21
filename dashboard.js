@@ -17,4 +17,24 @@ users.forEach(function (user) {
     userTitle.classList.add("user-name");
     userTitle.innerText = user.name + " (" + user.email + ")";
     userCard.appendChild(userTitle);
-  
+    
+    if (user.scores.length === 0) {
+        const noScores = document.createElement("p");
+        noScores.innerText = "No scores yet.";
+        userCard.appendChild(noScores);
+    } else {
+        user.scores.forEach(function (score) {
+            const scoreItem = document.createElement("p");
+            scoreItem.innerText = `${score.quizTitle}: ${score.score}`;
+            userCard.appendChild(scoreItem);
+        });
+    }
+    
+    userListContainer.appendChild(userCard);
+});
+
+logoutButton.addEventListener("click", function () {
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+})
+    
