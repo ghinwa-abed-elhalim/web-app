@@ -21,3 +21,8 @@ selectedQuiz.questions.forEach(function (questionObj, questionIndex) {
     questionText.classList.add("question-text");
     questionText.innerText = (questionIndex + 1) + ". " + questionObj.question;
     questionContainer.appendChild(questionText);
+    
+    questionObj.options.forEach(function (optionValue) {
+        const label = document.createElement("label");
+        label.classList.add("option-label");
+    
