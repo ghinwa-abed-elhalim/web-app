@@ -16,3 +16,8 @@ document.querySelector(".quiz-title").innerText = selectedQuiz.title;
 selectedQuiz.questions.forEach(function (questionObj, questionIndex) {
     const questionContainer = document.createElement("div");
     questionContainer.classList.add("question-box");
+    
+    const questionText = document.createElement("p");
+    questionText.classList.add("question-text");
+    questionText.innerText = (questionIndex + 1) + ". " + questionObj.question;
+    questionContainer.appendChild(questionText);
