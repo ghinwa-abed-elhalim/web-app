@@ -27,54 +27,89 @@ const quizzes = [
     ]
   }
 ];
-if (!localStorage.getItem("quizzes")) localStorage.setItem("quizzes", JSON.stringify(quizzes));
+
+if (localStorage.getItem("quizzes") === null) {
+  localStorage.setItem("quizzes", JSON.stringify(quizzes));
+}
 
 
-loginTabBtn.onclick = () => {
+loginTabBtn.onclick = function() {
   loginForm.classList.remove("hidden");
   registerForm.classList.add("hidden");
   messageEl.innerText = "";
 };
-registerTabBtn.onclick = () => {
+
+
+registerTabBtn.onclick = function() {
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
   messageEl.innerText = "";
 };
 
 
-registerForm.onsubmit = (e) => {
-  e.preventDefault();
+registerForm.onsubmit = function(event) {
+  event.preventDefault();
+
   const name = document.querySelector(".register-name").value;
   const email = document.querySelector(".register-email").value;
   const password = document.querySelector(".register-password").value;
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-  if (users.find(u => u.email === email)) {
+  let users = localStorage.getItem("users");
+  if (users === null) {
+    users = [];
+  } else {
+    users = JSON.parse(users);
+  }
+
+  const existingUser = users.find(function(user) {
+    return user.email === email;
+  });
+
+  if (existingUser) {
     messageEl.innerText = "User already exists!";
     return;
   }
 
-  users.push({ name, email, password, scores: [] });
+  const newUser = {
+    name: name,
+    email: email,
+    password: password,
+    scores: []
+  };
+
+  users.push(newUser);
   localStorage.setItem("users", JSON.stringify(users));
+
   messageEl.innerText = "Registered! You can login now.";
   loginForm.classList.remove("hidden");
   registerForm.classList.add("hidden");
 };
 
 
-loginForm.onsubmit = (e) => {
-  e.preventDefault();
+loginForm.onsubmit = function(event) {
+  event.preventDefault();
+
   const email = document.querySelector(".login-email").value;
   const password = document.querySelector(".login-password").value;
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+  let users = localStorage.getItem("users");
+  if (users === null) {
+    users = [];
+  } else {
+    users = JSON.parse(users);
+  }
 
   if (email === "admin@quiz.com" && password === "admin123") {
-    localStorage.setItem("currentUser", JSON.stringify({ name: "Admin", email }));
+    const adminUser = { name: "Admin", email: email };
+    localStorage.setItem("currentUser", JSON.stringify(adminUser));
     showDashboard();
     return;
   }
 
-  const user = users.find(u => u.email === email && u.password === password);
+  const user = users.find(function(user) {
+    return user.email === email && user.password === password;
+  });
+
   if (user) {
     localStorage.setItem("currentUser", JSON.stringify(user));
     showHome(user);
@@ -87,18 +122,28 @@ loginForm.onsubmit = (e) => {
 function showHome(user) {
   authSection.classList.add("hidden");
   homeSection.classList.remove("hidden");
-  document.querySelector(".welcome-message").innerText = `Welcome, ${user.name}! 🌸`;
+
+  const welcomeMessage = document.querySelector(".welcome-message");
+  welcomeMessage.innerText = "Welcome, " + user.name + "! 🌸";
+
   const quizList = document.querySelector(".quiz-list");
   quizList.innerHTML = "";
-  JSON.parse(localStorage.getItem("quizzes")).forEach((quiz, index) => {
-    const btn = document.createElement("button");
-    btn.innerText = quiz.title;
-    btn.className = "quiz-btn";
-    btn.onclick = () => showQuiz(index);
-    quizList.appendChild(btn);
+
+  const savedQuizzes = JSON.parse(localStorage.getItem("quizzes"));
+
+  savedQuizzes.forEach(function(quiz, index) {
+    const quizButton = document.createElement("button");
+    quizButton.innerText = quiz.title;
+    quizButton.className = "quiz-btn";
+    quizButton.onclick = function() {
+      showQuiz(index);
+    };
+    quizList.appendChild(quizButton);
   });
-  document.querySelectorAll(".logout-btn").forEach(btn => {
-    btn.onclick = () => {
+
+  const logoutButtons = document.querySelectorAll(".logout-btn");
+  logoutButtons.forEach(function(btn) {
+    btn.onclick = function() {
       localStorage.removeItem("currentUser");
       window.location.reload();
     };
@@ -110,51 +155,74 @@ function showQuiz(index) {
   homeSection.classList.add("hidden");
   quizSection.classList.remove("hidden");
 
-  const quiz = JSON.parse(localStorage.getItem("quizzes"))[index];
+  const savedQuizzes = JSON.parse(localStorage.getItem("quizzes"));
+  const quiz = savedQuizzes[index];
+
   const quizTitle = document.querySelector(".quiz-title");
   const quizForm = document.querySelector(".quiz-form");
   const result = document.querySelector(".score-result");
+
   quizTitle.innerText = quiz.title;
   quizForm.innerHTML = "";
   result.innerText = "";
 
-  quiz.questions.forEach((q, i) => {
-    const box = document.createElement("div");
-    box.className = "question-box";
-    const qText = document.createElement("p");
-    qText.className = "question-text";
-    qText.innerText = `${i + 1}. ${q.question}`;
-    box.appendChild(qText);
+  quiz.questions.forEach(function(q, i) {
+    const questionBox = document.createElement("div");
+    questionBox.className = "question-box";
 
-    q.options.forEach(opt => {
+    const questionText = document.createElement("p");
+    questionText.className = "question-text";
+    questionText.innerText = (i + 1) + ". " + q.question;
+    questionBox.appendChild(questionText);
+
+    q.options.forEach(function(option) {
       const label = document.createElement("label");
       label.className = "option-label";
+
       const input = document.createElement("input");
       input.type = "radio";
-      input.name = `question-${i}`;
-      input.value = opt;
+      input.name = "question-" + i;
+      input.value = option;
+
       label.appendChild(input);
-      label.append(" " + opt);
-      box.appendChild(label);
+      label.append(" " + option);
+
+      questionBox.appendChild(label);
     });
 
-    quizForm.appendChild(box);
+    quizForm.appendChild(questionBox);
   });
 
-  document.querySelector(".submit-btn").onclick = () => {
+  const submitBtn = document.querySelector(".submit-btn");
+  submitBtn.onclick = function() {
     let score = 0;
-    quiz.questions.forEach((q, i) => {
-      const selected = document.querySelector(`input[name="question-${i}"]:checked`);
-      if (selected && selected.value === q.answer) score++;
+
+    quiz.questions.forEach(function(q, i) {
+      const selectedOption = document.querySelector('input[name="question-' + i + '"]:checked');
+      if (selectedOption !== null) {
+        if (selectedOption.value === q.answer) {
+          score++;
+        }
+      }
     });
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const users = JSON.parse(localStorage.getItem("users"));
-    const userIndex = users.findIndex(u => u.email === currentUser.email);
-    const resultText = `${score} / ${quiz.questions.length}`;
-    users[userIndex].scores.push({ quizTitle: quiz.title, score: resultText });
+    let users = JSON.parse(localStorage.getItem("users"));
+
+    const userIndex = users.findIndex(function(u) {
+      return u.email === currentUser.email;
+    });
+
+    const resultText = score + " / " + quiz.questions.length;
+
+    users[userIndex].scores.push({
+      quizTitle: quiz.title,
+      score: resultText
+    });
+
     localStorage.setItem("users", JSON.stringify(users));
-    result.innerText = `You scored ${resultText}! 🎉`;
+
+    result.innerText = "You scored " + resultText + "! 🎉";
   };
 }
 
@@ -162,31 +230,49 @@ function showQuiz(index) {
 function showDashboard() {
   authSection.classList.add("hidden");
   dashboardSection.classList.remove("hidden");
-  const list = document.querySelector(".user-list");
-  list.innerHTML = "";
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-  users.forEach(user => {
-    const card = document.createElement("div");
-    card.className = "user-card";
-    const title = document.createElement("h3");
-    title.className = "user-name";
-    title.innerText = `${user.name} (${user.email})`;
-    card.appendChild(title);
+  const userList = document.querySelector(".user-list");
+  userList.innerHTML = "";
+
+  let users = localStorage.getItem("users");
+  if (users === null) {
+    users = [];
+  } else {
+    users = JSON.parse(users);
+  }
+
+  users.forEach(function(user) {
+    const userCard = document.createElement("div");
+    userCard.className = "user-card";
+
+    const userName = document.createElement("h3");
+    userName.className = "user-name";
+    userName.innerText = user.name + " (" + user.email + ")";
+    userCard.appendChild(userName);
+
     if (user.scores.length === 0) {
-      card.appendChild(document.createElement("p")).innerText = "No scores yet.";
+      const noScore = document.createElement("p");
+      noScore.innerText = "No scores yet.";
+      userCard.appendChild(noScore);
     } else {
-      user.scores.forEach(score => {
-        card.appendChild(document.createElement("p")).innerText = `${score.quizTitle}: ${score.score}`;
+      user.scores.forEach(function(score) {
+        const scoreEl = document.createElement("p");
+        scoreEl.innerText = score.quizTitle + ": " + score.score;
+        userCard.appendChild(scoreEl);
       });
     }
-    list.appendChild(card);
+
+    userList.appendChild(userCard);
   });
 }
 
 
 const savedUser = JSON.parse(localStorage.getItem("currentUser"));
-if (savedUser) {
-  if (savedUser.email === "admin@quiz.com") showDashboard();
-  else showHome(savedUser);
+
+if (savedUser !== null) {
+  if (savedUser.email === "admin@quiz.com") {
+    showDashboard();
+  } else {
+    showHome(savedUser);
+  }
 }
